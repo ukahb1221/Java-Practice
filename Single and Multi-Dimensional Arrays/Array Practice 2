@@ -1,0 +1,37 @@
+//Brian Ukah
+import java.util.Scanner;
+
+public class ArrayDeviation {
+
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		double [] numbers = new double [10];
+		System.out.print("Enter 10 numbers: ");
+		
+		//loop through and add 10 numbers to the array
+		for (int i = 0; i < numbers.length; i++) {
+			numbers[i] = input.nextDouble();
+		}
+		System.out.println("The mean of the array is " + mean(numbers));
+		System.out.println("The deviation of the array is " + deviation(numbers));
+		input.close();
+	}
+
+	private static double deviation(double[] x) {
+		double deviation = 0;
+		double mean = mean(x);
+		for (double e: x) {
+			deviation += Math.pow(e - mean, 2);
+		}
+		return Math.sqrt(deviation / (x.length - 1));
+	}
+
+	private static double mean(double[] y) {
+		double mean = 0;
+		for( double e : y) {
+			mean += e;
+		}
+		return mean / y.length;
+	}
+
+}
