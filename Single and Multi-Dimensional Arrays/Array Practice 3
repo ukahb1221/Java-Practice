@@ -1,0 +1,41 @@
+//Brian Ukah
+import java.util.Scanner;
+
+public class DiagonalSum {
+
+	public static void main(String[] args) {
+		double[][] matrix = getArray();
+
+		// Display the sum
+		System.out.println("\nThe sum of the diagonal matrix is " + sumMajorDiagonal(matrix));
+	}
+
+	private static double[][] getArray() {
+		Scanner input = new Scanner(System.in);
+
+		// Create a 4X4 matrix
+		double[][] matrixNum = new double[4][4];
+		System.out.println("Enter a " + matrixNum.length + " by " + matrixNum[0].length + " matrix row by row.");
+
+		for (int i = 0; i < matrixNum.length; i++) {
+			for (int j = 0; j < matrixNum[i].length; j++)
+				matrixNum[i][j] = input.nextDouble();
+		}
+		input.close();
+		return matrixNum;
+	}
+
+	private static double sumMajorDiagonal(double[][] matrix) {
+		double total = 0;
+		for (int i = 0; i < matrix.length; i++) {
+			for (int j = 0; j < matrix.length; j++) {
+				if (i == j) // this condition checks for diagonal
+				{
+					total = total + matrix[i][j];
+				}
+			}
+		}
+		return total;
+
+	}
+}
