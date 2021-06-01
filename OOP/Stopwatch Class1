@@ -1,0 +1,35 @@
+
+public class Stopwatch {
+	private long startTime;
+	private long endTime;
+
+	// Initializes startTime with the current time
+	Stopwatch() {
+		startTime = System.currentTimeMillis();
+	}
+
+	// Starts the timer
+	public void start() {
+		startTime = System.currentTimeMillis();
+	}
+
+	// Ends the timer
+	public void stop() {
+		endTime = System.currentTimeMillis();
+	}
+
+	// Compute the elapsed time
+	public long getElapsedTime() {
+		return (getEndTime() - getStartTime());
+	}
+
+	// Return start time
+	public long getStartTime() {
+		return startTime;
+	}
+
+	// Return end time
+	public long getEndTime() {
+		return endTime;
+	}
+}
