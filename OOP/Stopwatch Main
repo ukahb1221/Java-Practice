@@ -1,0 +1,51 @@
+//Brian Ukah
+public class StopwatchMain {
+
+	public static void main(String[] args) {
+		Stopwatch ultimateWatch = new Stopwatch();
+
+		// Create an array of 1 million random numbers
+		int[] numArray = getArray();
+
+		ultimateWatch.start();
+
+		// Use selection sort to organize array
+		selectionSort(numArray);
+
+		ultimateWatch.stop();
+
+		// Display the execution time
+		System.out.println("The execution time of sorting 100,000 " + "numbers using selection sort: "
+				+ ultimateWatch.getElapsedTime() + " milliseconds");
+	}
+
+	public static int[] getArray() {
+		int[] randomArray = new int[100000];
+		for (int i = 0; i < randomArray.length; i++) {
+			randomArray[i] = (int) (Math.random() * 10000 + 1);
+		}
+		return randomArray;
+	}
+
+	/*
+	 * Create a selection sort for the random integers yes I know not the best
+	 * sorting method to use in this case
+	 */
+	public static void selectionSort(int[] numArray) {
+		for (int i = 0; i < numArray.length - 1; i++) {
+			int minPos = i;
+			int min = numArray[minPos];
+
+			for (int j = i + 1; j < numArray.length; j++) {
+				minPos = j;
+				min = numArray[minPos];
+			}
+			// Swap min with the element at pos i
+			if (minPos != i) {
+				numArray[minPos] = numArray[i];
+				numArray[i] = min;
+			}
+
+		}
+
+	
