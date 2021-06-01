@@ -1,0 +1,31 @@
+import java.util.Scanner;
+
+public class Stocks {
+	String symbol;
+	String name;
+	double previousClosingPrice;
+	double currentPrice;
+
+	Scanner input = new Scanner(System.in);
+
+	// Construct a stock with a specified symbol and name
+	Stocks(String newSymbol, String newName) {
+		symbol = newSymbol;
+		name = newName;
+	}
+
+	public double getPreviousStockPrice() {
+		System.out.print("What was the Stock's Closing Price?: ");
+		return previousClosingPrice = input.nextDouble();
+	}
+
+	public double getCurrentStockPrice() {
+		System.out.print("What is the Stock's Current Price?: ");
+		return currentPrice = input.nextDouble();
+	}
+
+	// Return the change in stock prices
+	public double getChangeInPrice() {
+		return ((currentPrice - previousClosingPrice) /currentPrice * 100);
+	}
+}
