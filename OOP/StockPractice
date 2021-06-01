@@ -1,1 +1,14 @@
+//Brian Ukah
+public class StocksMain {
 
+	public static void main(String[] args) {
+		Stocks stock1 = new Stocks("ORCL", "Oracle Coporation");
+
+		System.out.println("The stock's: " + stock1.symbol);
+		System.out.println("The stock's offical name: " + stock1.name);
+		stock1.getPreviousStockPrice();
+		stock1.getCurrentStockPrice();
+		System.out.println("The stock's price change: " + stock1.getChangeInPrice());
+	}
+
+}
