@@ -1,0 +1,215 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+
+public class ActualExpensesPage extends GridPane {
+	// Labels
+
+	Label expense_id = new Label("Expense ID:");
+	Label month = new Label("Month:");
+	Label year = new Label("Year:");
+	Label customer_id = new Label("Customer ID:");
+	Label home_expenses = new Label("Housing Cost:");
+	Label food_expenses = new Label("Food Cost:");
+	Label transportation_expenses = new Label("Transportation Cost:");
+	Label car_expenses = new Label("Car Cost:");
+	Label leisure_expenses = new Label("Leisure Cost:");
+	Label savings_amount = new Label("Savings:");
+
+	// Text fields
+	TextField tf1 = new TextField();
+	TextField tf2 = new TextField();
+	TextField tf3 = new TextField();
+	TextField tf4 = new TextField();
+	TextField tf5 = new TextField();
+	TextField tf6 = new TextField();
+	TextField tf7 = new TextField();
+	TextField tf8 = new TextField();
+	TextField tf9 = new TextField();
+	TextField tf10 = new TextField();
+
+	// Buttons
+	Button add = new Button("Add");
+	Button delete = new Button("Delete");
+	Button update = new Button("Update");
+	Button compare = new Button("Compare");
+	Button exit = new Button("Exit");
+
+	public ActualExpensesPage() {
+
+		this.add(expense_id, 0, 0, 1, 1);
+		this.add(tf1, 1, 0, 1, 1);
+		this.add(month, 0, 1, 1, 1);
+		this.add(tf2, 1, 1, 1, 1);
+		this.add(year, 0, 2, 1, 1);
+		this.add(tf3, 1, 2, 1, 1);
+		this.add(customer_id, 0, 3, 1, 1);
+		this.add(tf4, 1, 3, 1, 1);
+		this.add(home_expenses, 0, 4, 1, 1);
+		this.add(tf5, 1, 4, 1, 1);
+		this.add(food_expenses, 0, 5, 1, 1);
+		this.add(tf6, 1, 5, 1, 1);
+		this.add(transportation_expenses, 0, 6, 1, 1);
+		this.add(tf7, 1, 6, 1, 1);
+		this.add(car_expenses, 0, 7, 1, 1);
+		this.add(tf8, 1, 7, 1, 1);
+		this.add(leisure_expenses, 0, 8, 1, 1);
+		this.add(tf9, 1, 8, 1, 1);
+		this.add(savings_amount, 0, 9, 1, 1);
+		this.add(tf10, 1, 9, 1, 1);
+		this.add(add, 0, 10, 1, 1);
+		this.add(delete, 1, 10, 1, 1);
+		this.add(update, 3, 10, 1, 1);
+		this.add(compare, 4, 10, 1, 1);
+		this.add(exit, 5, 10, 1, 1);
+
+		// set padding and spacing for widgets
+		setMargin(expense_id, new Insets(5));
+		setMargin(tf1, new Insets(5));
+		setMargin(month, new Insets(5));
+		setMargin(tf2, new Insets(5));
+		setMargin(year, new Insets(5));
+		setMargin(tf3, new Insets(5));
+		setMargin(customer_id, new Insets(5));
+		setMargin(tf4, new Insets(5));
+		setMargin(home_expenses, new Insets(5));
+		setMargin(tf5, new Insets(5));
+		setMargin(food_expenses, new Insets(5));
+		setMargin(tf6, new Insets(5));
+		setMargin(transportation_expenses, new Insets(5));
+		setMargin(tf7, new Insets(5));
+		setMargin(car_expenses, new Insets(5));
+		setMargin(tf8, new Insets(5));
+		setMargin(leisure_expenses, new Insets(5));
+		setMargin(tf9, new Insets(5));
+		setMargin(savings_amount, new Insets(5));
+		setMargin(tf10, new Insets(5));
+
+		// Create "Add" event
+		add.setOnAction(e -> {
+			try {
+				addExpenseInfo();
+			} catch (SQLIntegrityConstraintViolationException e1) {
+				System.out.println("Please choose a diffrent primary key.");
+			}
+			System.out.println("Expense information has been added has been added.");
+		});
+
+		// Create "Delete" event
+		delete.setOnAction(e -> {
+			deleteExpenseInfo();
+			System.out.println("Data has been deleted sucessfully");
+		});
+
+		// Create "Update" Event
+		update.setOnAction(e -> {
+			try {
+				updateExpenseInfo();
+			} catch (SQLIntegrityConstraintViolationException e1) {
+				System.out.println("Please enter textfields with the correct syntax.");
+				e1.printStackTrace();
+			}
+			System.out.println("State info was updated sucessfully");
+		});
+
+	}
+
+	public Connection getConnection() throws ClassNotFoundException {
+		Connection conn;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			if (conn != null) {
+				System.out.println("Accessing database...");
+			}
+			return conn;
+		} catch (Exception ex) {
+			System.out.println("Error " + ex.getMessage());
+			return null;
+		}
+	}
+
+	private Connection addExpenseInfo() throws SQLIntegrityConstraintViolationException {
+		Connection conn = null;
+		PreparedStatement pst;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			pst = conn.prepareStatement(
+					"INSERT INTO Actual_Expense_Tracker (Actual_ID, Month, Year, Customer_ID, Home_Expense, Food_Expense, Transportation_Expense, Car_Expense, Leisure_Expense, Savings)"
+							+ "values(?,?,?,?,?,?,?,?,?,?)");
+			pst.setInt(1, Integer.parseInt(tf1.getText()));
+			pst.setString(2, tf2.getText());
+			pst.setInt(3, Integer.parseInt(tf3.getText()));
+			pst.setInt(4, Integer.parseInt(tf4.getText()));
+			pst.setFloat(5, Float.parseFloat(tf5.getText()));
+			pst.setFloat(6, Float.parseFloat(tf6.getText()));
+			pst.setFloat(7, Float.parseFloat(tf7.getText()));
+			pst.setFloat(8, Float.parseFloat(tf8.getText()));
+			pst.setFloat(9, Float.parseFloat(tf9.getText()));
+			pst.setFloat(10, Float.parseFloat(tf10.getText()));
+			pst.executeUpdate();
+
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		}
+		return conn;
+	}
+
+	private Connection deleteExpenseInfo() {
+		Connection conn = null;
+		PreparedStatement pst;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			pst = conn.prepareStatement("DELETE FROM Actual_Expense_Tracker WHERE Actual_ID = ?");
+			pst.setInt(1, Integer.parseInt((tf1.getText())));
+			pst.executeUpdate();
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		}
+		return conn;
+	}
+
+	private Connection updateExpenseInfo() throws SQLIntegrityConstraintViolationException {
+		Connection conn = null;
+		PreparedStatement pst;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			System.out.println("Accessing database...");
+			pst = conn.prepareStatement("UPDATE Actual_Expense_Tracker"
+					+ " SET Month = ?, Year = ?, Customer_ID = ?, Home_Expense = ?,  Food_Expense = ?, Transportation_Expense = ?, Car_Expense = ?, Leisure_Expense = ?, Savings = ?"
+					+ " WHERE Actual_ID = ?");
+			pst.setInt(1, Integer.parseInt(tf2.getText()));
+			pst.setFloat(2, Integer.parseInt(tf3.getText()));
+			pst.setFloat(3, Integer.parseInt(tf4.getText()));
+			pst.setFloat(4, Float.parseFloat(tf5.getText()));
+			pst.setFloat(5, Float.parseFloat(tf6.getText()));
+			pst.setFloat(6, Float.parseFloat(tf7.getText()));
+			pst.setFloat(7, Float.parseFloat(tf8.getText()));
+			pst.setFloat(8, Float.parseFloat(tf9.getText()));
+			pst.setFloat(9, Float.parseFloat(tf10.getText()));
+			pst.setInt(10, Integer.parseInt(tf1.getText()));
+			pst.executeUpdate();
+
+		} catch (SQLException se) {
+			se.printStackTrace();
+
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		}
+		return conn;
+	}
+
+}
