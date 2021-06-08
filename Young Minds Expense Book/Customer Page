@@ -1,0 +1,251 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+
+public class CustomerPage extends GridPane {
+
+	// Labels
+	Label customer_id = new Label("Customer ID:");
+	Label first_name = new Label("First Name:");
+	Label last_name = new Label("Last Name:");
+	Label address = new Label("Address :");
+	Label date_joined = new Label("Date Joined:");
+	Label state = new Label("State:");
+
+	// Text fields
+	TextField tf1 = new TextField();
+	TextField tf2 = new TextField();
+	TextField tf3 = new TextField();
+	TextField tf4 = new TextField();
+	TextField tf5 = new TextField();
+	TextField tf6 = new TextField();
+
+	// Buttons
+	Button add = new Button("Add");
+	Button delete = new Button("Delete");
+	Button update = new Button("Update");
+	Button clear = new Button("Clear");
+	Button exit = new Button("Exit");
+
+	// ComboBox
+	ComboBox<String> customerBox = new ComboBox<String>();
+
+	public CustomerPage() {
+		// add widgets
+		this.add(customer_id, 0, 0, 1, 1);
+		this.add(tf1, 1, 0, 1, 1);
+		this.add(first_name, 0, 1, 1, 1);
+		this.add(tf2, 1, 1, 1, 1);
+		this.add(last_name, 0, 2, 1, 1);
+		this.add(tf3, 1, 2, 1, 1);
+		this.add(address, 0, 3, 1, 1);
+		this.add(tf4, 1, 3, 1, 1);
+		this.add(date_joined, 0, 4, 1, 1);
+		this.add(tf5, 1, 4, 1, 1);
+		this.add(state, 0, 5, 1, 1);
+		this.add(tf6, 1, 5, 1, 1);
+		this.add(add, 0, 6, 1, 1);
+		this.add(delete, 1, 6, 1, 1);
+		this.add(update, 2, 6, 1, 1);
+		this.add(clear, 3, 6, 1, 1);
+		this.add(exit, 4, 6, 1, 1);
+
+		// set spacing for widgets
+		setMargin(customer_id, new Insets(10));
+		setMargin(tf1, new Insets(10));
+		setMargin(first_name, new Insets(10));
+		setMargin(tf2, new Insets(10));
+		setMargin(last_name, new Insets(10));
+		setMargin(tf3, new Insets(10));
+		setMargin(address, new Insets(10));
+		setMargin(tf4, new Insets(10));
+		setMargin(date_joined, new Insets(10));
+		setMargin(tf5, new Insets(10));
+		setMargin(state, new Insets(10));
+		setMargin(tf6, new Insets(10));
+		setMargin(add, new Insets(5));
+		setMargin(delete, new Insets(5));
+		setMargin(update, new Insets(5));
+		setMargin(clear, new Insets(5));
+		setMargin(exit, new Insets(5));
+
+		// Create "Add" event
+		add.setOnAction(e -> {
+			try {
+				insertCustomer();
+			} catch (SQLIntegrityConstraintViolationException e1) {
+				System.out.println("Please choose a diffrent primary key.");
+			}
+			System.out.println("Cusomter has been added.");
+		});
+
+		// Create "Delete" event
+		delete.setOnAction(e -> {
+			deleteCustomer();
+			System.out.println("Customer has been deleted sucessfully");
+		});
+
+		// Create "Update" Event
+		update.setOnAction(e -> {
+			updateCustomer();
+			System.out.println("Customer information was updated sucessfully");
+		});
+		
+		// Create "Exit" Event 
+		exit.setOnAction(e ->{
+			Platform.exit();
+			System.out.println("Application has been closed.");
+
+		});
+
+		// Create "Clear" event
+		clear.setOnAction(e -> {
+			tf1.clear();
+			tf2.clear();
+			tf3.clear();
+			tf4.clear();
+			tf5.clear();
+			tf6.clear();
+			System.out.println("All text fields are have been cleared.");
+		});
+
+		customerBox.getItems().addAll(selectUsers());
+		customerBox.getSelectionModel().select(0);
+		add(customerBox, 0, 7, 1, 1);
+		customerBox.setOnAction(e -> customerBoxEventHandler());
+
+	}
+
+	private void customerBoxEventHandler() {
+		String selectedRow = customerBox.getValue();
+		String[] tokens = selectedRow.split(",");
+		tf1.setText(tokens[0]);// id
+		tf2.setText(tokens[1]); // first name
+		tf3.setText(tokens[2]);// last name
+		tf4.setText(tokens[3]);// address
+		tf5.setText(tokens[4]);// date joined
+		tf6.setText(tokens[5]);// state
+	}
+
+	public Connection getConnection() {
+		Connection conn;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			if (conn != null) {
+				System.out.println("Accessing database...");
+			}
+			return conn;
+		} catch (Exception ex) {
+			System.out.println("Error " + ex.getMessage());
+			return null;
+		}
+	}
+
+	private Connection insertCustomer() throws SQLIntegrityConstraintViolationException {
+		Connection conn = null;
+		PreparedStatement pst;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			pst = conn.prepareStatement(
+					"INSERT INTO Customer_Table (customer_id, first_name, last_name, address, date_joined, state_id)"
+							+ "values(?,?,?,?,?,?)");
+			pst.setInt(1, Integer.parseInt(tf1.getText()));
+			pst.setString(2, tf2.getText());
+			pst.setString(3, tf3.getText());
+			pst.setString(4, tf4.getText());
+			pst.setDouble(5, Double.parseDouble(tf5.getText()));
+			pst.setString(6, tf6.getText());
+			pst.executeUpdate();
+
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		}
+		return conn;
+	}
+
+	private Connection deleteCustomer() {
+		Connection conn = null;
+		PreparedStatement pst;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			System.out.println("Accessing database...");
+			pst = conn.prepareStatement("DELETE FROM Customer_Table WHERE first_name = ? AND last_name = ?");
+			pst.setString(1, tf2.getText());
+			pst.setString(2, tf3.getText());
+			pst.executeUpdate();
+
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		}
+		return conn;
+	}
+
+	private Connection updateCustomer() {
+		Connection conn = null;
+		PreparedStatement pst;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			System.out.println("Accessing database...");
+			pst = conn.prepareStatement("UPDATE Customer_Table"
+					+ " SET first_name = ?, last_name = ?, address = ?, date_joined = ?, state_id = ?"
+					+ " WHERE customer_id = ?");
+			pst.setString(1, tf2.getText());
+			pst.setString(2, tf3.getText());
+			pst.setString(3, tf4.getText());
+			pst.setDouble(4, Double.parseDouble(tf5.getText()));
+			pst.setString(5, tf6.getText());
+			pst.setInt(6, Integer.parseInt(tf1.getText()));
+			pst.executeUpdate();
+
+		} catch (SQLException se) {
+			se.printStackTrace();
+
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		}
+		return conn;
+	}
+
+	private ArrayList<String> selectUsers() {
+		String sqlSelectRowStatement = "SELECT * FROM Customer_Table";
+		ArrayList<String> customerBox = new ArrayList<>();
+		PreparedStatement preparedStatement;
+		Connection conn;
+		ResultSet rs;
+
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/young_minds", "root", "");
+			preparedStatement = conn.prepareStatement(sqlSelectRowStatement);
+			rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				String cust = rs.getInt(1) + "," + // get customer ID
+				rs.getString(2) + "," + // get first name
+				rs.getString(3)+ "," +// get last name
+				rs.getString(4) + "," +
+				rs.getDate(5) + "," +
+				rs.getString(6);
+				customerBox.add(cust);
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		return customerBox;
+	}
+}
